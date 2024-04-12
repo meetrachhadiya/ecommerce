@@ -7,7 +7,7 @@ router.register(r'products', ProductViewSet, basename='products')
 
 urlpatterns = [
     # path('products/', products, name='products'),
-    path('login/', login, name='login'),
+    path('login/', login, name='api-login'),
     path('', include(router.urls)),
 ]
 
