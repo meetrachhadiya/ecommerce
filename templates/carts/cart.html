@@ -1,0 +1,158 @@
+{% extends 'base/base.html' %}
+
+{% block title %} Cart {% endblock title %}
+
+{% block content %}
+
+<section class="section-content padding-y">
+    <div class="container">
+
+{% if request.user.cart.get_cart_counter == 0 %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <img src="/static/images/empty_cart.png" alt="">
+        <h2 class="mb-4">Your cart is empty!!</h2>
+        <div class="mt-4">
+            <a href="/" class="btn btn-primary">Back to Home</a>
+            <!-- You can add additional buttons or links here as needed -->
+        </div>
+    </div>
+</div>
+{% else %}
+        <div class="row">
+            <main class="col-md-9">
+                <div class="card">
+                    <table class="table table-borderless table-shopping-cart">
+                        <thead class="text-muted">
+                            <tr class="small text-uppercase">
+                                <th scope="col">Product</th>
+                                <th scope="col" width="120">Quantity</th>
+                                <th scope="col" width="120">Price</th>
+                                <th scope="col" class="text-right" width="200"> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cart_item in cart.cart_items.all %}
+                            <tr>
+                                <td>
+                                    <figure class="itemside">
+                                        <div class="aside"><img
+                                                src="/media/{{cart_item.product.product_images.first.product_image}}/"
+                                                class="img-sm"></div>
+                                        <figcaption class="info">
+                                            <a href="{% url 'get-product' cart_item.product.uid %}" class="title text-dark">{{cart_item.product.product_name}}</a>
+                                            <p class="text-dark small">Size: {{cart_item.size_variant.size}},<br> Brand: Meet</p>
+                                        </figcaption>
+                                    </figure>
+                                </td>
+                                <td>
+                                    <div class="input-group mb-3 input-spinner">
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-light" type="button" onclick="changeQuantity(1, '{{ cart_item.uid }}')"> + </button>
+                                        </div>
+                                        <input type="text" class="form-control" value="{{ cart_item.quantity }}"
+                                            name="quantity" id="quantity_{{ cart_item.uid }}">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-light" type="button" onclick="changeQuantity(-1, '{{ cart_item.uid }}')"> - </button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="price-wrap">
+                                        <var class="price">₹{{cart_item.price}}</var>
+                                        <small class="text-muted">₹315.20 each </small>
+                                    </div> <!-- price-wrap .// -->
+                                </td>
+                                <td class="text-right">
+                                    <a data-original-title="Save to Wishlist" title="" href="" class="btn btn-light"
+                                        data-toggle="tooltip"> <i class="fa fa-heart"></i></a>
+                                    <a href="{% url 'remove_from_cart' cart_item.uid%}" class="btn btn-light"> Remove</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="card-body border-top">
+                        <a href="{% url 'checkout' %}" class="btn btn-primary float-md-right"> Procced to Checkout <i
+                                class="fa fa-chevron-right"></i> </a>
+                        <a href="/" class="btn btn-secondary"> <i class="fa fa-chevron-left"></i> Continue shopping </a>
+                    </div>
+                </div> <!-- card.// -->
+
+                <div class="alert alert-success mt-3">
+                    <p class="icontext"><i class="icon text-success fa fa-truck"></i> Free Delivery within 1-2 weeks
+                    </p>
+                </div>
+
+            </main> <!-- col.// -->
+            <aside class="col-md-3">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>Have coupon?</label>
+                                {% include "base/alert.html" %}
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="coupon_code"
+                                        placeholder="Coupon code">
+                                    <span class="input-group-append">
+                                        <button type="submit" class="btn btn-primary">Apply</button>
+                                    </span>
+                                </div>
+                            </div>
+                            {% if cart.coupon %}
+                            <a href="{% url 'remove_coupon' cart.uid %}"
+                                class="btn btn-secondary">{{cart.coupon.coupon_code}}</a>
+                            {% endif %}
+                        </form>
+                    </div> <!-- card-body.// -->
+                </div> <!-- card .// -->
+                <div class="card">
+                    <div class="card-body">
+                        <dl class="dlist-align">
+                            <dt>Total price:</dt>
+                            <dd class="text-right"> {% if cart.coupon %} {{cart.get_cart_total |add:cart.coupon.coupon_discount_price}} {% else %} {{cart.get_cart_total}} {% endif %}</dd>
+                        </dl>
+                        {% if cart.coupon %}
+                        <dl class="dlist-align">
+                            <dt>Discount:</dt>
+                            <dd class="text-right"> {{cart.coupon.coupon_discount_price}} </dd>
+                        </dl>
+                        {% endif %}
+                        <dl class="dlist-align">
+                            <dt>Total:</dt>
+                            <dd class="text-right  h5"><strong>{{cart.get_cart_total}}</strong></dd>
+                        </dl>
+                        <hr>
+                        <p class="text-center mb-3">
+                            <img src="/static/images/misc/payments.png" height="26">
+                        </p>
+                    </div> <!-- card-body.// -->
+                </div> <!-- card .// -->
+            </aside> <!-- col.// -->
+        </div>
+
+
+    </div> <!-- container .//  -->
+</section>
+
+    <script>
+        //To change quantity of products
+        function changeQuantity(change, cartItemId) {
+            var quantityInput = document.getElementById('quantity_' + cartItemId);
+            var newQuantity = parseInt(quantityInput.value) + change;
+            if (newQuantity < 1) {
+                return; // Prevent quantity from becoming negative
+            }
+            quantityInput.value = newQuantity;
+        
+            // Construct the URL with query parameters
+            var url = "{% url 'update-quantity' %}?cart_item_id=" + cartItemId + "&quantity=" + newQuantity;
+        
+            // Redirect to the URL
+            window.location.href = url;
+        }
+    </script>
+{% endif %}
+{% endblock content %}

@@ -1,0 +1,57 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Order
+{% endblock title %}
+
+{% block content %}
+
+<section class="section-content padding-y">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body pb-0">
+                        <h4 class="card-title">Order Details</h4>
+                        {% if order %}
+                        <h5 class="card-title">Order {{ order.order_id }}</h5>
+                        <p>Order Total: <strong>{{ order.order_total }}</strong></p>
+                        <p>Order Date: <strong>{{ order.created_at }}</strong></p>
+                        <p>Shipping Address: <strong>{{ order.address }}</strong></p>
+                        
+                        <a href="{% url 'cancel_order' order_id=order.order_id %}" class="btn btn-danger">Cancel Order</a>
+                        <a href="{% url 'edit_order' order_id=order.order_id %}" class="btn btn-primary">Edit Order</a>
+                        <br><br>
+                        <h5>Order Items:</h5>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Details</th>
+                                    <th>Size</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.order_items.all %}
+                                <tr>    
+                                    <td><img class='img-sm' src="/media/{{ item.product.product_images.first.product_image }}" alt=""></td>
+                                    <td>{{ item.product }}</td>
+                                    <td>{{ item.size_variant }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.price }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- Add more order details here as needed -->
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

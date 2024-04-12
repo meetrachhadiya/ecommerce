@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+      {% block title %}
+      {% endblock %}
+    </title>
+
+    {% load static %}
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet"/>
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.png">
+  </head>
+
+  <body>
+
+    {% if show_navbar_footer %}
+      <header class="header">
+        <nav class="navbar navbar-expand-lg">
+          <div class="container-fluid">
+            {% if request.user.user_type == "Merchant" %}
+            <a class="navbar-brand" href="/store/dashboard/">Store</a>
+            {% else %}
+            <a class="navbar-brand" href="/">Store</a>
+            {% endif %}
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+              {% if request.user.user_type == "Merchant" %}
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                  <a class="nav-link {% if request.path == '/store/dashboard/' %}active{% endif %}"
+                    href="/store/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link {% if request.path == '/clothes/add_product/' %}active{% endif %}"
+                    href="/clothes/add_product">Add Product</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link {% if request.path == '/clothes/view_products/' or '/clothes/product_detail/' in request.path or '/clothes/update_product/' in request.path or '/clothes/delete_product/' in request.path %}active{% endif %}"
+                    href="/clothes/view_products">View Products</a>
+                </li>
+              </ul>
+
+              {% elif request.user.user_type == "Customer" %}
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                  <a class="nav-link {% if request.path == '/' %}active{% endif %}"
+                    href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link {% if request.path == '/order/my_order/' or '/order/order_summary/' in request.path %}active{% endif %}"
+                    href="/order/my_order">Orders</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link {% if request.path == '/cart/my_cart/' %}active{% endif %}"
+                    href="/cart/my_cart">Cart</a>
+                </li>
+
+              </ul>
+              {% endif %}
+
+              <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                {% if user.is_authenticated %}
+
+                <li class="nav-item">
+                  <a class="nav-link {% if request.path == '/account/profile/' or '/account/update_profile/' in request.path %}active{% endif %}"
+                    href="/account/profile">Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/account/logout">Logout</a>
+                </li>
+
+                {% else %}
+
+                <li class="nav-item">
+                  <a class="nav-link" href="/account/login">Login</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="/account/signup">Sign Up</a>
+                </li>
+
+                {% endif %}
+              </ul>
+
+            </div>
+          </div>
+        </nav>
+      </header>
+    {% endif %}
+
+    <main class="main-content">
+      {% block content %}
+      {% endblock %}
+    </main>
+
+      <footer class="footer">
+        <div class="footer-items">
+          <a href="#">About Us</a>
+          <a href="#">Contact Us</a>
+        </div>
+        <p>Copyright &copy; <span id="year"></span> Khushi Kamat | All Rights Reserved</p>
+      </footer>
+
+    {% block jsextra %}
+    {% endblock %}
+
+    <script>
+      var currentYear = new Date().getFullYear();
+      document.getElementById("year").textContent = currentYear;
+    </script>
+    
+  </body>
+</html>

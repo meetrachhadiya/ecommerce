@@ -1,0 +1,109 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Checkout
+{% endblock title %}
+
+{% block content %}
+
+<section class="section-content padding-y">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <form action="{% url 'continue-to-payment' %}"method="post">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Shipping Information</h4>
+                        {% include "base/alert.html" %}
+                        <!-- Display shipping address form -->
+                        
+                            {% csrf_token %}
+                            <!-- Input fields for shipping address -->
+                            <label for="inputAddress">Addresses</label>
+                            {% for address in cart.user.addresses.all %}
+
+                            
+                            <div class="form-group card-body">
+                                <input class="form-check-input" {% if address.is_default %} checked {% endif %} type="radio" name="selected_address" id="address{{ address.uid }}" value="{{ address.uid }}">
+                                <p class="title text-dark">
+                                    <span>
+                                        Name : {{address.name}},
+                                    </span><span>
+                                        Phone Number : {{address.phone_number}}
+                                    </span>
+                                </p>
+                                <p class="text-dark small">
+                                    {{address.address}}
+                                </p>
+                                <p class="text-dark small">
+                                    {{address.pincode}}
+                                </p>
+                                {% comment %} <input type="text" class="form-control" id="inputAddress" name="address"> {% endcomment %}
+                            </div>
+                            {% endfor %}
+                            <!-- More input fields for shipping information -->
+                            <!-- ... -->
+
+                            <a class="btn btn-primary" href="{% url 'address' %}">Add new Address</a>
+                        </div>
+                        <div class="card-body border-top">
+                            <button type="submit" class="btn btn-primary float-md-right"> Procced to Payment <i
+                                class="fa fa-chevron-right"></i> </button>
+                                <a href="{% url 'cart' %}" class="btn btn-secondary"> <i class="fa fa-chevron-left"></i> Back To Cart </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                    <h4 class="card-title mb-3">Products</h4>
+                            {% for cart_item in cart.cart_items.all %}
+                            <div class="media m-3">
+                                <img src="/media/{{cart_item.product.product_images.first.product_image}}/" class="img-sm" alt="{{ cart_item.product.title }}">
+                                <div class="media-body ml-3">
+                                    <h6 class="title mb-1">{{ cart_item.product.product_name }}</h6>
+                                    <dl class="dlist-inline small">
+                                        <dt>Quantity:</dt>
+                                        <dd>{{ cart_item.quantity }},</dd>
+                                        <dt>Size:</dt>
+                                        <dd>{{ cart_item.size_variant.size }},</dd>
+                                        <dt>Price:</dt>
+                                        <dd>{{ cart_item.price }}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            {% endfor %}  
+
+                            <div class="card-body">
+                                <dl class="dlist-align">
+                                    <dt>Total price:</dt>
+                                    <dd class="text-right"> {% if cart.coupon %} {{cart.get_cart_total |add:cart.coupon.coupon_discount_price}} {% else %} {{cart.get_cart_total}} {% endif %}</dd>
+                                </dl>
+                                {% if cart.coupon %}
+                                <dl class="dlist-align">
+                                    <dt>Discount:</dt>
+                                    <dd class="text-right"> {{cart.coupon.coupon_discount_price}} </dd>
+                                </dl>
+                                {% endif %}
+                                <dl class="dlist-align">
+                                    <dt>Total:</dt>
+                                    <dd class="text-right  h5"><strong>{{cart.get_cart_total}}</strong></dd>
+                                </dl>
+                                <hr>
+                                <p class="text-center mb-3">
+                                    <img src="/static/images/misc/payments.png" height="26">
+                                </p>
+                            </div> <!-- card-body.// -->        
+                </div> 
+                        
+                </div> <!-- card.// -->
+            </div> <!-- col.// -->
+
+            
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

@@ -1,0 +1,47 @@
+{% extends 'base/base.html' %}
+
+{% block title %} 
+Register
+{% endblock title %} 
+
+{% block content %}
+        
+<section class="section-content padding-y" style="min-height:80vh">
+
+    <!-- ============================ COMPONENT LOGIN   ================================= -->
+        <div class="card mx-auto" style="max-width: 380px; margin-top:30px;">
+          <div class="card-body">
+          <h4 class="card-title mb-4">Register</h4>
+
+          <form action="" method="post">
+            {% include 'base/alert.html' %}
+            {% csrf_token %}
+                <div class="form-group">
+                <input required name="first_name" class="form-control" placeholder="Firstname" type="text">
+               </div> <!-- form-group// -->
+               <div class="form-group">
+                <input required name="last_name" class="form-control" placeholder="Lastname" type="text">
+               </div> <!-- form-group// -->
+                <div class="form-group">
+                 <input name="email" class="form-control" placeholder="Email" type="email">
+                </div> <!-- form-group// -->
+                <div class="form-group">
+                <input name="password" class="form-control" placeholder="Password" type="password">
+                 </div> <!-- form-group// -->              
+                <div class="form-group">
+                  <a href="{% url 'reset-password' %}" class="float-right">Forgot password?</a> 
+                <label class="float-left custom-control custom-checkbox"> <input type="checkbox" class="custom-control-input" checked=""> <div class="custom-control-label"> Remember </div> </label>
+                </div> <!-- form-group form-check .// -->
+                <div class="form-group">
+                  <button type="submit" class="btn btn-primary btn-block"> Register </button>
+                </div> <!-- form-group// -->    
+          </form>
+          </div> <!-- card-body.// -->
+        </div> <!-- card .// -->
+    
+         <p class="text-center mt-4">All ready have account? <a href="{% url 'login' %}">Log in</a></p>
+         
+    <!-- ============================ COMPONENT LOGIN  END.// ================================= -->
+</section>
+
+{% endblock content %}

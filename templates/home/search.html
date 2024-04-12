@@ -1,0 +1,101 @@
+{% extends 'base/base.html' %}
+{% block title %}Search{% endblock title %}
+{% block content %}
+
+<div class="container">   
+    <div class="row pt-3">
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form id="searchForm" class="search-form" method="GET">
+                        <div class="form-group">
+                            <label>Categories</label>
+                            <div>
+                                {% for category in categories %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="categories[]" id="category_{{ category.uid }}" value="{{ category.uid }}" {% if category.uid in selected_categories %} checked {% endif %}>
+                                        <label class="form-check-label" for="category_{{ category.uid }}">
+                                            {{ category.category_name }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>                        
+                        <div class="form-group">
+                            <label for="productName">Search by Name</label>
+                            <input id="productName" type="text" name="name" class="form-control" placeholder="Enter product name" value="{{ request.GET.name }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="minRating">Minimum Rating</label>
+                            <input id="minRating" type="number" name="min_rating" class="form-control" placeholder="Enter minimum rating" value="{{ request.GET.min_rating }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Size Variants</label>
+                            <div>
+                                {% for size in sizes %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="sizes[]" id="size_{{ size.id }}" value="{{ size.id }}" {% if size.id in selected_sizes %} checked {% endif %}>
+                                        <label class="form-check-label" for="size_{{ size.id }}">
+                                            {{ size.size }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" name="new_products" class="form-check-input" id="newProductsCheckbox" {% if request.GET.new_products %} checked {% endif %}>
+                            <label class="form-check-label" for="newProductsCheckbox">New Products</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" name="has_discounts" class="form-check-input" id="discountsCheckbox" {% if request.GET.has_discounts %} checked {% endif %}>
+                            <label class="form-check-label" for="discountsCheckbox">Products with Discounts</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Search</button>
+                    </form>                        
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="row">
+                {% for product in products %}
+                    <div class="col-md-4">
+                        <figure class="card card-product-grid">
+                            <div class="img-wrap">
+                                <img src="/media/{{product.product_images.first.product_image}}" alt="{{product.product_name}}">
+                                <span class="topbar">
+                                    <a href="#" class="float-right"><i class="fa fa-heart"></i></a>
+                                    {% if product.is_new_product %}
+                                        <span class="badge badge-success"> NEW </span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <figcaption class="info-wrap border-top">
+                                <a href="{% url 'get-product' product.uid %}" class="title">{{product.product_name}}</a>
+                                <div class="price-wrap mt-2">
+                                    {% if product.product_discount_price %}
+                                        <span class="price">₹{{product.product_discount_price}}</span>
+                                        <small class="price-old">{{product.product_price}}</small>
+                                        <small class="price-old">{{product.discount}}% off</small>
+                                    {% else %}
+                                        <span class="price">${{product.product_price}}</span>
+                                    {% endif %}
+                                </div>
+                            </figcaption>
+                        </figure>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add event listener to the category select element
+    document.getElementById('categorySelect').addEventListener('change', function () {
+        // Submit the form when category selection changes
+        document.getElementById('searchForm').submit();
+    });
+</script>
+
+{% endblock content %}

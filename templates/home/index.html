@@ -1,0 +1,53 @@
+{% extends 'base/base.html' %}
+
+
+{% block title %}
+E-commerce
+{% endblock title %}
+
+{% block content %}
+
+<div class="container pt-5">
+    {% include 'base/alert.html' %}
+    <div class="row">
+        {% for product in products %}
+        
+        <div class="col-md-3">
+            <figure class="card card-product-grid">
+                <div class="img-wrap"> 
+                    <img src="/media/{{product.product_images.first.product_image}}" alt="{{product.product_name}}">
+                    <span class="topbar">
+
+                        <a href="#" class="float-right"><i class="fa fa-heart"></i></a>
+                        
+                        {% if product.is_new_product %}    
+                        <span class="badge badge-success"> NEW </span>
+                        {% endif %}
+                            
+                    </span>
+                    {% comment %} <a class="btn-overlay" href="#"><i class="fa fa-search-plus"></i> Quick view</a>  {% endcomment %}
+                </div>
+                <figcaption class="info-wrap border-top">
+                    <a href=" {% url 'get-product' product.uid %}" class="title">{{product.product_name}}</a>
+                    <div class="price-wrap mt-2">
+                        {% if product.product_discount_price %}
+                        <span class="price">₹{{product.product_discount_price}}</span>
+                        <small class="price-old">{{product.product_price}}</small>
+                        <small class="price-old">{{product.discount}}%off</small>
+                        {% else %}
+                        <span class="price">${{product.product_price}}</span>
+                        {% endif %}
+                    </div> <!-- price-wrap.// -->
+                </figcaption>
+                <!-- <figcaption class="info-wrap border-top text-right">
+                    <small class="text-uppercase font-weight-bolder text-warning">ELECTRONICS</small>
+                    <p><a href="#" class="title">IKEA Poäng Swivel Chair</a></p>
+                </figcaption> -->
+            </figure> <!-- card // -->
+        </div> <!-- col.// -->
+
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

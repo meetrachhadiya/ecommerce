@@ -1,0 +1,34 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Payment Success
+{% endblock title %}
+
+{% block content %}
+
+<section class="section-content padding-y">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h2 class="mb-4">Order Confirmed!</h2>
+                <p>Your payment has been successfully processed.</p>
+                <p>Thank you for your purchase!</p>              
+
+                {% if order %}
+                <h2 class="mb-4">Order Details!</h2>
+                <p>Order id: <strong>{{ order.order_id }}</strong></p>
+                <p>Order Total: <strong>{{ order.order_total }}</strong></p>
+                <p>Order Date: <strong>{{ order.created_at }}</strong></p>
+                <p>Shipping Address: <strong>{{ order.address }}</strong></p>
+                {% endif %}
+                
+                <div class="mt-4">
+                    <a href="/" class="btn btn-primary">Back to Home</a>
+                    <!-- You can add additional buttons or links here as needed -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

@@ -1,0 +1,48 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Orders
+{% endblock title %}
+
+{% block content %}
+
+<section class="section-content padding-y">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    {% include "base/alert.html" %}                    
+                    <div class="card-body pb-0">
+                        <h4 class="card-title">Order Details</h4>
+                        {% if orders %}
+                        {% for order in orders %}
+                        <h5 class="card-title"><a href="{% url 'get-order' order_id=order.order_id %}">Order {{ order.order_id }}</a></h5>
+                        <p>Order Total: <strong>{{ order.order_total }}</strong></p>
+                        <p>Order Date: <strong>{{ order.created_at }}</strong></p>
+                        <p>Shipping Address: <strong>{{ order.address }}</strong></p>
+                        <br>
+                        <!-- Add more order details here as needed -->
+                        {% empty %}
+                        No Orders
+                        {% endfor %}
+
+                        {% else %}
+                        <div class="row justify-content-center">
+                            <div class="col-md-8 text-center">
+                                {% comment %} <img src="/static/images/empty_cart.png" alt=""> {% endcomment %}
+                                <h2 class="mb-4">You Have No Orders!!</h2>
+                                <div class="my-4">
+                                    <a href="/" class="btn btn-primary">Back to Home</a>
+                                    <!-- You can add additional buttons or links here as needed -->
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

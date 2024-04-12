@@ -1,0 +1,230 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+{{product.product_name}}
+{% endblock title %}
+
+{% block content %}
+
+<section class="section-content padding-y bg">
+  <div class="container">
+
+    <!-- ============================ PRODUCT COMPONENT ================================= -->
+
+    {% if product %}
+
+    <div class="card">
+      <div class="row no-gutters">
+        <aside class="col-md-6">
+          <article class="gallery-wrap">
+
+            <div class=''>
+              <div class="img-big-wrap">
+                {% for image in product.product_images.all %}
+                <div><img src="/media/{{image.product_image}}"></div>
+                {% endfor %}
+              </div> <!-- slider-product.// -->
+
+              <div class="thumbs-wrap px-4">
+                {% for image in product.product_images.all %}
+                <div class="item-thumb"><img src="/media/{{image.product_image}}"></div>
+                {% endfor %}
+              </div> <!-- slider-nav.// -->
+            </div>
+
+          </article> <!-- gallery-wrap .end// -->
+        </aside>
+        <main class="col-md-6 border-left">
+          <article class="content-body">
+
+            <h2 class="title">{{product.product_name}}</h2>
+
+            <div class="rating-wrap my-3">
+              <ul class="rating-stars">
+                <li style="width:100%" class="stars-active">
+                  {% for i in product_rating %}
+                  <i class="fa fa-star"></i>
+                  {% endfor %}
+                </li>
+                <li>
+                  <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                  <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                  <i class="fa fa-star"></i>
+                </li>
+              </ul>
+              <small class="label-rating text-muted">{{product.product_total_review}}</small>
+              <small class="label-rating text-success"> <i class="fa fa-clipboard-check"></i>
+                {{product.product_total_order}} orders </small>
+            </div> <!-- rating-wrap.// -->
+
+            <div class="mb-3">
+              {% include "base/alert.html" %}
+              <var class="price h4">
+                {% if updated_price %}
+                <span class="price">₹{{updated_price}}</span>
+                <small class="price-old">₹{{product.product_price}}</small>
+                <small class="price-old">{{product.discount}}%off</small>
+                {% elif product.product_discount_price %}
+                <span class="price">₹{{product.product_discount_price}}</span>
+                <small class="price-old">₹{{product.product_price}}</small>
+                <small class="price-old">{{product.discount}}%off</small>
+                {% else %}
+                <span class="price">${{product.product_price}}</span>
+                {% endif %}
+              </var>
+
+
+            </div> <!-- price-detail-wrap .// -->
+
+            <p>{{product.product_description}}</p>
+
+            <dl class="row">
+              <dt class="col-sm-3">Model</dt>
+              <dd class="col-sm-9">Odsy-1000</dd>
+
+              <dt class="col-sm-3">Color</dt>
+              <dd class="col-sm-9">Brown</dd>
+
+              <dt class="col-sm-3">Delivery</dt>
+              <dd class="col-sm-9">Russia, USA, and Europe </dd>
+            </dl>
+
+            <hr>
+            <div class="form-row">
+              <div class="form-group col-md flex-grow-0">
+                <label>Quantity</label>
+                <div class="input-group mb-3 input-spinner">
+                  <div class="input-group-prepend">
+                    <button class="btn btn-light" type="button" id="button-plus"> + </button>
+                  </div>
+                  <input type="text" class="form-control" value="1" name="quantity" id="quantity">
+                  <div class="input-group-append">
+                    <button class="btn btn-light" type="button" id="button-minus"> − </button>
+                  </div>
+                </div>
+              </div> <!-- col.// -->
+
+              {% if product.size_variant.count %}
+              <div class="form-group col-md">
+                <label>Select size</label>
+                <div class="mt-1">
+
+                  {% for size in product.size_variant.all %}
+
+                  <label class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" onchange="get_current_price('{{size.size}}')" name="selected_size"  
+                    {% if selected_size == size.size %} 
+                    checked   
+                    {% endif %} class="custom-control-input">
+                    <div class="custom-control-label">{{size.size}}</div>
+                  </label>
+
+                  {% endfor %}
+                </div>
+              </div> <!-- col.// -->
+              {% endif %}
+            </div> <!-- row.// -->
+
+            <a href="{% url 'buy-now' product.uid %}?size={{selected_size}}" id="buy-now-btn" class="btn  btn-primary"> Buy now </a>
+            <a href="{% url 'add-to-cart' product.uid %}?size={{selected_size}}" id="add-to-cart-btn"
+              class="btn btn-outline-primary"> <span class="text">Add to cart</span> <i
+                class="fas fa-shopping-cart"></i> </a>
+          </article> <!-- product-info-aside .// -->
+        </main> <!-- col.// -->
+      </div> <!-- row.// -->
+    </div> <!-- card.// -->
+
+    {% endif %}
+
+    <!-- ============================ COMPONENT 1 END .// ================================= -->
+
+  </div>
+</section>
+
+<script>
+
+  //Image slider
+  $(document).ready(function () {
+
+    $(".img-big-wrap").slick({
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      arrows: false,
+      fade: false,
+      asNavFor: ".thumbs-wrap"
+    });
+    $(".thumbs-wrap").slick({
+      slidesToShow: 3,
+      slidesToScroll: 1,
+      asNavFor: ".img-big-wrap",
+      dots: true,
+      centerMode: true,
+      focusOnSelect: true
+    });
+  });
+
+  function get_current_price(size) {
+    console.log(size)
+    window.location.href = window.location.pathname + `?size=${size}`
+  }
+
+  // Get the plus button and input element
+  const quantityInput = document.getElementById('quantity');
+  const addToCartBtn = document.getElementById('add-to-cart-btn');
+  const buyNowBtn = document.getElementById('buy-now-btn');
+
+  document.getElementById('button-plus').addEventListener('click', function () {
+    changeQuantity(1);
+  });
+
+  document.getElementById('button-minus').addEventListener('click', function () {
+    changeQuantity(-1);
+  });
+
+  function changeQuantity(change) {
+    var quantityInput = document.getElementById('quantity');
+    var newQuantity = parseInt(quantityInput.value) + change;
+    if (newQuantity < 1) {
+      return; // Prevent quantity from becoming negative
+    }
+    quantityInput.value = newQuantity;
+  }
+
+  addToCartBtn.addEventListener('click', function (event) {
+    // Prevent the default action of the anchor tag
+    event.preventDefault();
+
+    // Get the base URL from the href attribute
+    const baseUrl = addToCartBtn.getAttribute('href');
+
+    // Get the quantity value
+    const quantity = quantityInput.value;
+
+    // Construct the new URL with the quantity parameter
+    const newUrl = baseUrl + '&quantity=' + encodeURIComponent(quantity);
+
+    // Redirect to the new URL
+    window.location.href = newUrl;
+  });  
+  
+  buyNowBtn.addEventListener('click', function (event) {
+  
+    event.preventDefault();
+
+    // Get the base URL from the href attribute
+    const baseUrl = buyNowBtn.getAttribute('href');
+
+    // Get the quantity value
+    const quantity = quantityInput.value;
+
+    // Construct the new URL with the quantity parameter
+    const newUrl = baseUrl + '&quantity=' + encodeURIComponent(quantity);
+
+    // Redirect to the new URL
+    window.location.href = newUrl;
+
+  });
+
+</script>
+
+{% endblock content %}

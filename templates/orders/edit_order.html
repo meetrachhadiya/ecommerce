@@ -1,0 +1,63 @@
+<!-- edit_order.html -->
+{% extends 'base/base.html' %}
+
+{% block title %}
+Edit Order
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <h4>Edit Order</h4>
+            <!-- Display order details -->
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" value="{{ order.address }}" disabled>
+            <!-- Additional fields and order items can be displayed here -->
+            
+            <!-- Display order items -->
+            <h5>Order Items:</h5>
+            {% comment %} <ul>
+                {% for item in order.order_items.all %}
+                <li>
+                    <p>{{ item.product }} - Quantity: {{ item.quantity }} - Price: {{ item.price }} </p>
+                    <a href="{% url 'remove-order-item' order_id=order.order_id item_uid=item.uid %}" class="btn btn-danger">Remove</a>
+                    <br><br>
+                </li>
+                {% endfor %}
+            </ul> {% endcomment %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Details</th>
+                        <th>Size</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.order_items.all %}
+                    <tr>    
+                        <td><img class='img-sm' src="/media/{{ item.product.product_images.first.product_image }}" alt=""></td>
+                        <td>{{ item.product }}</td>
+                        <td>{{ item.size_variant }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.price }}</td>
+                        <td><a href="{% url 'remove-order-item' order_id=order.order_id item_uid=item.uid %}" class="btn btn-danger">Remove</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <!-- Save Changes and Cancel buttons -->
+            
+            <a href="{% url 'get-order' order.order_id %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+</div>
+{% endblock content %}
