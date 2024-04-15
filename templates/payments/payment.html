@@ -91,16 +91,16 @@ Payment
                                     data-parent="#paymentAccordion">
                                     <div class="card-body">
                                         <!-- Payment form for RazorPay -->
-                                        {% comment %} <form method="post"> {% endcomment %}
+                                        <form method="post">
                                             {% csrf_token %}
                                             <!-- Input fields for RazorPay details -->
                                             <!-- ... -->
-                                            {% comment %} <input type="hidden" name="razorpay"> {% endcomment %}
+                                            <input type="hidden" name="payment_method" value="razorpay">
                                             <!-- Button to confirm RazorPay payment -->
-                                            <button type="submit" id="rzp-button1"
+                                            <button type="submit"
                                                 class="btn btn-primary btn-block">Confirm Order</button>
-                                            {% comment %}
-                                        </form> {% endcomment %}
+                                            
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -113,7 +113,6 @@ Payment
     </div>
 </section>
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
     function togglePaymentForm() {
         var selectedMethod = document.getElementById("paymentMethod").value;
@@ -126,7 +125,12 @@ Payment
             }
         }
     }
+</script>
 
+{% if payment %}
+    
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
     var options = {
         "key": "{{secret_key}}",
         "amount": "{{ payment.amount }}",
@@ -150,7 +154,7 @@ Payment
             formData.append('razorpay_payment_id', response.razorpay_payment_id);
             formData.append('razorpay_order_id', response.razorpay_order_id);
             formData.append('razorpay_signature', response.razorpay_signature);
-            formData.append('payment_method', "razorpay");
+            formData.append('payment_method', "razorpay_success");
             const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
             formData.append('csrfmiddlewaretoken', csrftoken);
 
@@ -198,9 +202,8 @@ Payment
         });
     });
     
-    document.getElementById('rzp-button1').onclick = function (e) {
-        rzp1.open();
-        e.preventDefault();
-    };
+    rzp1.open();
+
+{% endif %}    
 </script>
 {% endblock content %} 

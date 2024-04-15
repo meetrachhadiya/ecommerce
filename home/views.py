@@ -4,12 +4,8 @@ from carts.models import Cart
 from products.models import Category, Product, SizeVariant
 # Create your views here.
 
-class DemoException(Exception):
-    print("Demo Exception")
-
 def index(request):
     context = {'products' : Product.objects.all()}
-    # raise DemoException("Demo")
     return render(request, 'home/index.html', context)
 
 def search(request):

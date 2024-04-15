@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'carts',
     'orders',
     'rest_framework',
+    'rest_framework.authtoken',
     'api',
 ]
 
@@ -58,8 +59,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    # 'home.middleware.DemoMiddleWare',
 ]
 
 ROOT_URLCONF = 'ecommerce.urls'
@@ -156,3 +155,9 @@ RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID')
 RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET')
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}

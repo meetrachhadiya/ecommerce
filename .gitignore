@@ -9,7 +9,6 @@ media
 # Backup files # 
 *.bak 
 
-
 # File-based project format
 *.iws
 

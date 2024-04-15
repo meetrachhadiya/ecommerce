@@ -233,8 +233,20 @@ def payment(request):
                 cart.delete()
                 return redirect('order-confirm')
 
-            if request.POST["payment_method"] == "razorpay":
-                print('razorpay')
+            elif request.POST["payment_method"] == "razorpay":
+                print('razorpay initialize')
+                client = razorpay.Client(auth = (settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+                payment = client.order.create({
+                    'amount' : cart.get_cart_total() * 100,
+                    'currency' : 'INR',
+                    'payment_capture' : 1, 
+                })
+                print(payment)
+                context['payment'] = payment
+                context['secret_key'] = settings.RAZORPAY_KEY_ID
+
+            elif request.POST["payment_method"] == "razorpay_success":
+                print('razorpay success')    
                 if cart.coupon:
                     order = Order.objects.create(
                         user=request.user,
@@ -272,19 +284,8 @@ def payment(request):
                         )   
                 
                 cart.delete()
-                print("hiii")
                 return JsonResponse(status = 302 , data = {'success' : '127.0.0.1:8000/order/confirm' })
-                print("hiii")
-                
-    client = razorpay.Client(auth = (settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-    payment = client.order.create({
-        'amount' : cart.get_cart_total() * 100,
-        'currency' : 'INR',
-        'payment_capture' : 1, 
-    })
-    print(payment)
-    context['payment'] = payment
-    context['secret_key'] = settings.RAZORPAY_KEY_ID
+    
         # messages.success(request, "Order Placed Successfully!!")
         # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     return render(request, 'payments/payment.html', context)
