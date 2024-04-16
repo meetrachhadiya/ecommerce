@@ -188,22 +188,31 @@ Payment
 
     rzp1.on('payment.failed', function (response) {
         // AJAX request when payment fails
-        $.ajax({
-            url: 'http://127.0.0.1:8000/cart/payment/',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(response),
-            success: function(data) {
-                console.log('Payment failure data sent to backend:', data);
-            },
-            error: function(xhr, status, error) {
-                console.error('Error sending payment failure data to backend:', error);
-            }
-        });
+        // $.ajax({
+        //     url: 'http://127.0.0.1:8000/cart/payment/',
+        //     method: 'POST',
+        //     contentType: 'application/json',
+        //     data: JSON.stringify(response),
+        //     success: function(data) {
+        //         console.log('Payment failure data sent to backend:', data);
+        //     },
+        //     error: function(xhr, status, error) {
+        //         console.error('Error sending payment failure data to backend:', error);
+        //     }
+        // });
+
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
     });
     
     rzp1.open();
 
-{% endif %}    
 </script>
+
+{% endif %}    
 {% endblock content %} 
