@@ -32,7 +32,7 @@ def user_profile(request, email):
         return render(request, 'accounts/profile.html')
     else:
         messages.warning(request, 'You are not authorized to access this page')
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect(request.path_info)
 
 def loginUser(request):
     if request.method == 'POST':
@@ -164,6 +164,7 @@ def change_password(request):
 
     return render(request, 'accounts/change_password.html')
 
+@login_required(login_url='login')
 def address(request):
     if request.method == 'POST':
         name = request.POST.get('name')

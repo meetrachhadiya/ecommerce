@@ -75,23 +75,24 @@ def add_to_cart(request, uid):
     cart, created = Cart.objects.get_or_create(user=request.user)
     
     size = request.GET.get('size')
-    print(size)
+    quantity = int(request.GET.get('quantity'))
+    
     if size :
         size_variant = SizeVariant.objects.get(size=size)
     else:
         messages.warning(request, "select a size to continue")
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     
+    if quantity is None:
+        quantity = 1
+
     cart_item = CartItems.objects.filter(cart=cart, product=product, size_variant=size_variant)
-    print(cart_item)
     if cart_item.exists():
         cart_item = cart_item.first()
-        quantity =int(request.GET.get('quantity'))
         cart_item.quantity += quantity 
         cart_item.save()
-    
     else:
-        cart_items = CartItems.objects.create(cart=cart, product=product, size_variant=size_variant)
+        cart_items = CartItems.objects.create(cart=cart, product=product, size_variant=size_variant, quantity=quantity)
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -101,23 +102,24 @@ def buy_now(request, uid):
     cart, created = Cart.objects.get_or_create(user=request.user)
     
     size = request.GET.get('size')
-    print(size)
+    quantity = int(request.GET.get('quantity'))
+
     if size :
         size_variant = SizeVariant.objects.get(size=size)
     else:
         messages.warning(request, "select a size to continue")
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     
+    if quantity is None:
+        quantity = 1
+
     cart_item = CartItems.objects.filter(cart=cart, product=product, size_variant=size_variant)
-    print(cart_item)
     if cart_item.exists():
         cart_item = cart_item.first()
-        quantity =int(request.GET.get('quantity'))
         cart_item.quantity += quantity 
         cart_item.save()
-    
     else:
-        cart_items = CartItems.objects.create(cart=cart, product=product, size_variant=size_variant)
+        cart_items = CartItems.objects.create(cart=cart, product=product, size_variant=size_variant, quantity=quantity)
 
     return redirect('checkout')    
 
