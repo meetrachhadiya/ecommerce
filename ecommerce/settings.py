@@ -117,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -128,7 +128,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [ BASE_DIR / 'static']
+
+if DEBUG:
+    STATICFILES_DIRS = [ BASE_DIR / 'static']
+else:
+    STATIC_ROOT = BASE_DIR / 'static'
 
 #media configurations
 MEDIA_ROOT = BASE_DIR /'media'

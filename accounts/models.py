@@ -10,8 +10,14 @@ from django.utils.translation import gettext_lazy as _
 
 #create model here
 
+USER_TYPE_CHOICES = (
+    ('Customer', 'Customer'),
+    ('Merchant', 'merchant')
+)
+
 class User(AbstractUser):
     username = None
+    # user_type = models.CharField(max_length=50, choices=USER_TYPE_CHOICES, default='Customer')
     first_name = models.CharField(_("first name"), max_length=150, blank=True, null=True)
     last_name = models.CharField(_("last name"), max_length=150, blank=True, null=True)
     email = models.EmailField(primary_key=True)
@@ -60,4 +66,3 @@ class Address(BaseModel):
 
     def __str__(self):
         return (self.address)
-    

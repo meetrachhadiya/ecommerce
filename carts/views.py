@@ -15,7 +15,7 @@ import razorpay
 
 @login_required(login_url='login')
 def cart(request):
-    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart, _ = Cart.objects.get_or_create(user=request.user)
     if request.method == "POST":
         coupon_code = request.POST.get('coupon_code')
         try:
@@ -28,7 +28,7 @@ def cart(request):
             messages.warning(request, "Coupon is Expired!!")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         
-        if cart.coupon:
+        elif cart.coupon:
             if cart.coupon == coupon:
                 messages.warning(request, "Coupon is already applied!!")
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -36,26 +36,22 @@ def cart(request):
                 messages.warning(request, "Another Coupon is applied!!")
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         
-        if coupon.minimum_amount and coupon.minimum_amount > cart.get_cart_total():
+        elif coupon.minimum_amount and coupon.minimum_amount >= cart.get_cart_total():
             messages.warning(request, "Coupon is not applicable!!")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         
-        
-        cart.coupon = coupon
-        cart.save()
-        messages.success(request, "Coupon Applied Successfully!!")
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        else:
+            cart.coupon = coupon
+            cart.save()
+            messages.success(request, "Coupon Applied Successfully!!")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     
-    
-    # client = razorpay.Client(auth = (settings.KEY, settings.SECRET))
-    # payment = client.order.create({
-    #     'amount' : cart.get_cart_total() * 100,
-    #     'currency' : 'INR',
-    #     'payment_capture' : 1, 
-    # })
-
-    
-    # print(payment)
+    if cart.coupon:
+        if cart.coupon.minimum_amount and cart.coupon.minimum_amount >= cart.get_cart_total():
+            cart.coupon = None
+            cart.save()
+            messages.warning(request, "Coupon is not applicable!!")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     context = {'cart' : cart}
     return render(request, 'carts/cart.html', context)
