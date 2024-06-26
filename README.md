@@ -2,6 +2,8 @@
 
 This Django Ecommerce Website is a project designed to serve as a foundation for building an online store. It comes equipped with essential features such as user authentication, product management, cart functionality, and integration with Razorpay for payments.
 
+https://github.com/meetrachhadiya/ecommerce/assets/77917050/5beda269-6860-4127-91f4-ad3c116f608f
+
 ## Prerequisites
 - Python 3.x installed on your system
 - Basic understanding of Django framework
